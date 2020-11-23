@@ -3,7 +3,7 @@ from typing import List
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from fdc.indices.model import Ticket
+from fdc.model import Ticket
 from fdc.utils.browser import Browser
 from fdc.utils.table import parse_table, Table
 

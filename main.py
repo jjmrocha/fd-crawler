@@ -1,9 +1,8 @@
-from fdc.indices.model import Ticket
+from fdc.model import Ticket
 from fdc.utils.browser import Browser
 from fdc.yahoo import financials
 from fdc.yahoo import prices
 from fdc.yahoo import stats
-from datetime import datetime
 
 if __name__ == '__main__':
     stock = Ticket('GILD')

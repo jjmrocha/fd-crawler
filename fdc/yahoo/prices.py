@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import List
 
-from fdc.indices.model import Ticket
+from fdc.model import Ticket
 from fdc.utils import rest
 
 
@@ -40,3 +40,4 @@ def get_prices(ticket: Ticket) -> List[Price]:
 
 def from_epoch(dt: int) -> datetime:
     return datetime.fromtimestamp(dt)
+

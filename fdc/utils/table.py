@@ -1,4 +1,5 @@
 from typing import Optional, Dict, Iterable, List
+
 from selenium.webdriver.remote.webelement import WebElement
 
 

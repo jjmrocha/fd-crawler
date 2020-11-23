@@ -1,6 +1,6 @@
 from typing import Optional, Dict, List
 
-from fdc.indices.model import Ticket
+from fdc.model import Ticket
 from fdc.utils.browser import Browser
 from fdc.yahoo.base import extract_data_from_page, YahooBase
 
