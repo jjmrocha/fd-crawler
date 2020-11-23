@@ -1,4 +1,5 @@
 from typing import Dict, Optional
+import json
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -8,8 +9,18 @@ class YahooBase:
         self.data = data
         self._process_data_()
 
+    def __str__(self):
+        return json.dumps(self.to_dict())
+
     def _process_data_(self):
         raise NotImplementedError("Please Implement this method")
+
+    def to_dict(self):
+        return {
+            key: value.to_dict() if isinstance(value, YahooBase) else value
+            for key, value in self.__dict__.items()
+            if key != 'data'
+        }
 
     def find_value(self, *field_names: str) -> Optional:
         value = self.data

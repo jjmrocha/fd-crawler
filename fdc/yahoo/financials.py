@@ -14,6 +14,18 @@ class Financials(YahooBase):
         self.cash_flow_statement_ttm = _ttm_cfs(self.data.get('cashflowStatementHistoryQuarterly', {}))
         self.cash_flow_statement_history = _cash_flow_statement_history(self.data.get('cashflowStatementHistory', {}))
 
+    def to_dict(self):
+        return {
+            key: value.to_dict() if isinstance(value, YahooBase) else (
+                {
+                    key: value.to_dict() if isinstance(value, YahooBase) else value
+                    for key, value in value.items()
+                } if isinstance(value, dict) else value
+            )
+            for key, value in self.__dict__.items()
+            if key != 'data'
+        }
+
 
 class BalanceSheet(YahooBase):
     def _process_data_(self):
@@ -30,9 +42,6 @@ class BalanceSheet(YahooBase):
         self.long_term_debt = super().find_value('longTermDebt', 'raw')
         self.stockholder_equity = super().find_value('totalStockholderEquity', 'raw')
         self.retained_earnings = super().find_value('retainedEarnings', 'raw')
-
-    def invested_capital(self):
-        return self.total_assets - self.current_liabilities - self.cash
 
 
 class IncomeStatement(YahooBase):
@@ -111,6 +120,9 @@ def _delete_unused_fields(entries: Dict) -> Dict:
     new_dict = {}
 
     for key, value in entries.items():
+        if not isinstance(value, dict):
+            continue
+
         if key == 'endDate':
             new_dict[key] = {'fmt': value.get('fmt', '-')}
         else:
@@ -124,10 +136,14 @@ def _compute_ttm(quarters: List[Dict]) -> Dict:
 
     for quarter in quarters[1:]:
         for key, value in quarter.items():
-            if key != 'endDate':
-                old_value = last.get(key, 0)
-                value_to_add = value.get('raw', 0)
-                last[key] = {'raw': old_value + value_to_add}
+            if key == 'endDate':
+                continue
+            if not isinstance(value, dict):
+                continue
+
+            old_value = last.get(key, {}).get('raw', 0)
+            value_to_add = value.get('raw', 0)
+            last[key] = {'raw': old_value + value_to_add}
 
     return last
 
