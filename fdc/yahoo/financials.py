@@ -7,12 +7,24 @@ from fdc.yahoo.base import extract_data_from_page, YahooBase
 
 class Financials(YahooBase):
     def _process_data_(self):
-        self.balance_sheet_lq = _last_quarter_bs(self.data.get('balanceSheetHistoryQuarterly', {}))
-        self.balance_sheet_history = _balance_sheet_history(self.data.get('balanceSheetHistory', {}))
-        self.income_statement_ttm = _ttm_iss(self.data.get('incomeStatementHistoryQuarterly', {}))
-        self.income_statement_history = _income_statement_history(self.data.get('incomeStatementHistory', {}))
-        self.cash_flow_statement_ttm = _ttm_cfs(self.data.get('cashflowStatementHistoryQuarterly', {}))
-        self.cash_flow_statement_history = _cash_flow_statement_history(self.data.get('cashflowStatementHistory', {}))
+        self.balance_sheet_lq = _last_quarter_bs(
+            super().find_value('balanceSheetHistoryQuarterly', default_value={})
+        )
+        self.balance_sheet_history = _balance_sheet_history(
+            super().find_value('balanceSheetHistory', default_value={})
+        )
+        self.income_statement_ttm = _ttm_iss(
+            super().find_value('incomeStatementHistoryQuarterly', default_value={})
+        )
+        self.income_statement_history = _income_statement_history(
+            super().find_value('incomeStatementHistory', default_value={})
+        )
+        self.cash_flow_statement_ttm = _ttm_cfs(
+            super().find_value('cashflowStatementHistoryQuarterly', default_value={})
+        )
+        self.cash_flow_statement_history = _cash_flow_statement_history(
+            super().find_value('cashflowStatementHistory', default_value={})
+        )
 
     def to_dict(self):
         return {
@@ -29,41 +41,44 @@ class Financials(YahooBase):
 
 class BalanceSheet(YahooBase):
     def _process_data_(self):
-        self.end_date = super().find_value('endDate', 'fmt')
-        self.total_assets = super().find_value('totalAssets', 'raw')
-        self.current_assets = super().find_value('totalCurrentAssets', 'raw')
-        self.cash = super().find_value('cash', 'raw')
-        self.inventory = super().find_value('inventory', 'raw')
-        self.property_plant_equipment = super().find_value('propertyPlantEquipment', 'raw')
-        self.goodwill = super().find_value('goodWill', 'raw')
-        self.total_liabilities = super().find_value('totalLiab', 'raw')
-        self.current_liabilities = super().find_value('totalCurrentLiabilities', 'raw')
-        self.short_term_debt = super().find_value('shortLongTermDebt', 'raw')
-        self.long_term_debt = super().find_value('longTermDebt', 'raw')
-        self.stockholder_equity = super().find_value('totalStockholderEquity', 'raw')
-        self.retained_earnings = super().find_value('retainedEarnings', 'raw')
+        self.end_date = super().find_value('endDate', 'fmt', default_value='-')
+        self.total_assets = super().find_value('totalAssets', 'raw', default_value=0)
+        self.current_assets = super().find_value('totalCurrentAssets', 'raw', default_value=0)
+        self.cash = super().find_value('cash', 'raw', default_value=0)
+        self.inventory = super().find_value('inventory', 'raw', default_value=0)
+        self.property_plant_equipment = super().find_value('propertyPlantEquipment', 'raw', default_value=0)
+        self.goodwill = super().find_value('goodWill', 'raw', default_value=0)
+        self.total_liabilities = super().find_value('totalLiab', 'raw', default_value=0)
+        self.current_liabilities = super().find_value('totalCurrentLiabilities', 'raw', default_value=0)
+        self.short_term_debt = super().find_value('shortLongTermDebt', 'raw', default_value=0)
+        self.long_term_debt = super().find_value('longTermDebt', 'raw', default_value=0)
+        self.stockholder_equity = super().find_value('totalStockholderEquity', 'raw', default_value=0)
+        self.retained_earnings = super().find_value('retainedEarnings', 'raw', default_value=0)
 
 
 class IncomeStatement(YahooBase):
     def _process_data_(self):
-        self.end_date = super().find_value('endDate', 'fmt')
-        self.revenue = super().find_value('totalRevenue', 'raw')
-        self.gross_profit = super().find_value('grossProfit', 'raw')
-        self.sga = super().find_value('sellingGeneralAdministrative', 'raw')
-        self.operating_income = super().find_value('operatingIncome', 'raw')
-        self.net_income = super().find_value('netIncome', 'raw')
+        self.end_date = super().find_value('endDate', 'fmt', default_value='-')
+        self.revenue = super().find_value('totalRevenue', 'raw', default_value=0)
+        self.gross_profit = super().find_value('grossProfit', 'raw', default_value=0)
+        self.sga = super().find_value('sellingGeneralAdministrative', 'raw', default_value=0)
+        self.operating_income = super().find_value('operatingIncome', 'raw', default_value=0)
+        self.net_income = super().find_value('netIncome', 'raw', default_value=0)
         pass
 
 
 class CashFlowStatement(YahooBase):
     def _process_data_(self):
-        self.end_date = super().find_value('endDate', 'fmt')
-        self.cash_from_operating_activities = super().find_value('totalCashFromOperatingActivities', 'raw')
-        self.cash_from_investing_activities = super().find_value('totalCashflowsFromInvestingActivities', 'raw')
-        self.cash_from_financing_activities = super().find_value('totalCashFromFinancingActivities', 'raw')
-        self.capital_expenditures = super().find_value('capitalExpenditures', 'raw')
-        self.dividends_paid = super().find_value('dividendsPaid', 'raw')
-        self.depreciation_and_amortization = super().find_value('depreciation', 'raw')
+        self.end_date = super().find_value('endDate', 'fmt', default_value='-')
+        self.cash_from_operating_activities = super().find_value('totalCashFromOperatingActivities', 'raw',
+                                                                 default_value=0)
+        self.cash_from_investing_activities = super().find_value('totalCashflowsFromInvestingActivities', 'raw',
+                                                                 default_value=0)
+        self.cash_from_financing_activities = super().find_value('totalCashFromFinancingActivities', 'raw',
+                                                                 default_value=0)
+        self.capital_expenditures = super().find_value('capitalExpenditures', 'raw', default_value=0)
+        self.dividends_paid = super().find_value('dividendsPaid', 'raw', default_value=0)
+        self.depreciation_and_amortization = super().find_value('depreciation', 'raw', default_value=0)
 
 
 def get_financials(browser: Browser, ticket: Ticket):

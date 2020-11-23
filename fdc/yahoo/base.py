@@ -22,13 +22,13 @@ class YahooBase:
             if key != 'data'
         }
 
-    def find_value(self, *field_names: str) -> Optional:
+    def find_value(self, *field_names: str, default_value=None) -> Optional:
         value = self.data
 
         for name in field_names:
             value = value.get(name)
             if not value:
-                return None
+                return default_value
 
         return value
 
