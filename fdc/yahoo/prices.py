@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import List
 
-from fdc.model import Ticket
+from fdc.utils import date_util
 from fdc.utils import rest
 
 
@@ -12,13 +12,13 @@ class Price:
     price: float
 
 
-def get_prices(ticket: Ticket) -> List[Price]:
-    endpoint = f'https://query2.finance.yahoo.com/v8/finance/chart/{ticket.code}'
-    end_date = datetime.now()
+def get_prices_using_api(ticket: str) -> List[Price]:
+    endpoint = f'https://query2.finance.yahoo.com/v8/finance/chart/{ticket}'
+    end_date = date_util.now()
     start_date = end_date - timedelta(weeks=52)
     params = {
-        'period1': int(start_date.timestamp()),
-        'period2': int(end_date.timestamp()),
+        'period1': date_util.to_epoch(start_date),
+        'period2': date_util.to_epoch(end_date),
         'interval': '1d',
     }
     response = rest.execute(endpoint, params)
@@ -31,13 +31,8 @@ def get_prices(ticket: Ticket) -> List[Price]:
 
     return [
         Price(
-            date=from_epoch(date),
+            date=date_util.from_epoch(date),
             price=value,
         )
         for date, value in zip(dates, values)
     ]
-
-
-def from_epoch(dt: int) -> datetime:
-    return datetime.fromtimestamp(dt)
-

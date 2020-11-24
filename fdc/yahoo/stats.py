@@ -1,6 +1,5 @@
-from fdc.model import Ticket
 from fdc.utils.browser import Browser
-from fdc.yahoo.base import extract_data_from_page, YahooBase
+from fdc.yahoo.base import extract_data_from_page, YahooBase, fetch_modules
 
 
 class Stats(YahooBase):
@@ -15,7 +14,13 @@ class Stats(YahooBase):
         self.book_value = super().find_value('defaultKeyStatistics', 'bookValue', 'raw', default_value=0)
 
 
-def get_stats(browser: Browser, ticket: Ticket):
-    driver = browser.goto(f'https://finance.yahoo.com/quote/{ticket.code}/key-statistics')
+def get_stats_using_browser(browser: Browser, ticket: str):
+    driver = browser.goto(f'https://finance.yahoo.com/quote/{ticket}/key-statistics')
     data = extract_data_from_page(driver)
+    return Stats(data)
+
+
+def get_stats_using_api(ticket: str):
+    modules = ['financialData', 'price', 'defaultKeyStatistics', 'summaryDetail']
+    data = fetch_modules(ticket, modules)
     return Stats(data)

@@ -1,7 +1,9 @@
-from typing import Dict, Optional
 import json
+from typing import Dict, Optional, List
 
 from selenium.webdriver.remote.webdriver import WebDriver
+
+from fdc.utils import rest
 
 
 class YahooBase:
@@ -13,7 +15,7 @@ class YahooBase:
         return json.dumps(self.to_dict())
 
     def _process_data_(self):
-        raise NotImplementedError("Please Implement this method")
+        raise NotImplementedError("Please implement this method")
 
     def to_dict(self):
         return {
@@ -42,3 +44,16 @@ def extract_data_from_page(driver: WebDriver) -> Dict:
 def _handle_consent(driver):
     if 'consent.yahoo.com' in driver.current_url:
         driver.find_element_by_css_selector('button[type=submit]').click()
+
+
+def fetch_modules(ticket: str, modules: List[str]) -> Dict:
+    endpoint = f'https://query2.finance.yahoo.com/v10/finance/quoteSummary/{ticket}'
+    params = {
+        'modules': ','.join(modules),
+    }
+    response = rest.execute(endpoint, params)
+    if response.status_code != 200:
+        return {}
+
+    json_data = response.json()
+    return json_data['quoteSummary']['result'][0]

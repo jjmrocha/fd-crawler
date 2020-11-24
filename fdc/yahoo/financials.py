@@ -1,8 +1,7 @@
 from typing import Optional, Dict, List
 
-from fdc.model import Ticket
 from fdc.utils.browser import Browser
-from fdc.yahoo.base import extract_data_from_page, YahooBase
+from fdc.yahoo.base import extract_data_from_page, YahooBase, fetch_modules
 
 
 class Financials(YahooBase):
@@ -81,9 +80,22 @@ class CashFlowStatement(YahooBase):
         self.depreciation_and_amortization = super().find_value('depreciation', 'raw', default_value=0)
 
 
-def get_financials(browser: Browser, ticket: Ticket):
-    driver = browser.goto(f'https://finance.yahoo.com/quote/{ticket.code}/financials')
+def get_financials_using_browser(browser: Browser, ticket: str):
+    driver = browser.goto(f'https://finance.yahoo.com/quote/{ticket}/financials')
     data = extract_data_from_page(driver)
+    return Financials(data)
+
+
+def get_financials_using_api(ticket: str):
+    modules = [
+        'balanceSheetHistoryQuarterly',
+        'balanceSheetHistory',
+        'incomeStatementHistoryQuarterly',
+        'incomeStatementHistory',
+        'cashflowStatementHistoryQuarterly',
+        'cashflowStatementHistory'
+    ]
+    data = fetch_modules(ticket, modules)
     return Financials(data)
 
 
