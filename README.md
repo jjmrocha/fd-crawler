@@ -25,10 +25,16 @@ Setup
    * Download from `http://chromedriver.chromium.org/`
    * Add `chromedriver` to your `PATH`
    
-   
-How to Use
-----------
 
+How-to import
+-------------
+```
+pip install git+https://github.com/jjmrocha/fd-crawler.git
+```
+
+   
+How-to Use
+----------
 The following program:
 ```python
 import time
