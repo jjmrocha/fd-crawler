@@ -1,12 +1,22 @@
-from distutils.core import setup
+import setuptools
 
-setup(
-    name='fd-crawler',
-    version='1.0.0',
-    packages=['fdc', 'fdc.proxy', 'fdc.utils', 'fdc.yahoo', 'fdc.indices'],
-    url='https://github.com/jjmrocha/fd-crawler',
-    license='MIT',
-    author='Joaquim Rocha',
-    author_email='jrocha@gmailbox.org',
-    description='Finance crawler for reading financial data from public sites'
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+    name="fd-crawler-jjmrocha",
+    version="0.0.1",
+    author="Joaquim Rocha",
+    author_email="jrocha@gmailbox.org",
+    description="Finance crawler for reading financial data from public sites",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/jjmrocha/fd-crawler",
+    packages=setuptools.find_packages(),
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
+    python_requires='>=3.7',
 )
