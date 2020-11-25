@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="fd-crawler-jjmrocha",
+    name="fd-crawler",
     version="0.0.1",
     author="Joaquim Rocha",
     author_email="jrocha@gmailbox.org",
