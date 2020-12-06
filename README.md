@@ -29,7 +29,7 @@ Setup
 How-to import
 -------------
 ```
-pipenv install git+https://github.com/jjmrocha/fd-crawler.git#egg=fd-crawler
+pipenv install -e git+https://github.com/jjmrocha/fd-crawler.git#egg=fd-crawler
 ```
 
    
