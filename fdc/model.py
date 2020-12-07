@@ -1,9 +1,7 @@
-from typing import List
+from typing import Iterator
 
-from fdc.yahoo.financials import (Financials, get_financials_using_api, get_financials_using_browser)
-from fdc.yahoo.prices import (Price, get_prices_using_api)
-from fdc.yahoo.stats import (Stats, get_stats_using_api, get_stats_using_browser)
 from fdc.utils.browser import Browser
+from fdc.yahoo import (financials, prices, stats)
 
 
 class Ticket:
@@ -26,17 +24,17 @@ class Ticket:
     def use_browser_when_possible(self, browser: Browser):
         self.browser = browser
 
-    def stats(self) -> Stats:
+    def stats(self) -> stats.Stats:
         return (
-            get_stats_using_browser(self.browser, self.yahoo_code()) if self.browser
-            else get_stats_using_api(self.yahoo_code())
+            stats.load_using_browser(self.browser, self.yahoo_code()) if self.browser
+            else stats.load_using_api(self.yahoo_code())
         )
 
-    def financials(self) -> Financials:
+    def financials(self) -> financials.Financials:
         return (
-            get_financials_using_browser(self.browser, self.yahoo_code()) if self.browser
-            else get_financials_using_api(self.yahoo_code())
+            financials.load_using_browser(self.browser, self.yahoo_code()) if self.browser
+            else financials.load_using_api(self.yahoo_code())
         )
 
-    def prices(self) -> List[Price]:
-        return get_prices_using_api(self.yahoo_code())
+    def prices(self, weeks: int = 52) -> Iterator[prices.Price]:
+        return prices.load_using_api(self.yahoo_code(), weeks)

@@ -80,13 +80,13 @@ class CashFlowStatement(YahooBase):
         self.depreciation_and_amortization = super().find_value('depreciation', 'raw', default_value=0)
 
 
-def get_financials_using_browser(browser: Browser, ticket: str):
+def load_using_browser(browser: Browser, ticket: str):
     driver = browser.goto(f'https://finance.yahoo.com/quote/{ticket}/financials')
     data = extract_data_from_page(driver)
     return Financials(data)
 
 
-def get_financials_using_api(ticket: str):
+def load_using_api(ticket: str):
     modules = [
         'balanceSheetHistoryQuarterly',
         'balanceSheetHistory',

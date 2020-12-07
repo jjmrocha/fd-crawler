@@ -14,13 +14,13 @@ class Stats(YahooBase):
         self.book_value = super().find_value('defaultKeyStatistics', 'bookValue', 'raw', default_value=0)
 
 
-def get_stats_using_browser(browser: Browser, ticket: str):
+def load_using_browser(browser: Browser, ticket: str):
     driver = browser.goto(f'https://finance.yahoo.com/quote/{ticket}/key-statistics')
     data = extract_data_from_page(driver)
     return Stats(data)
 
 
-def get_stats_using_api(ticket: str):
+def load_using_api(ticket: str):
     modules = ['financialData', 'price', 'defaultKeyStatistics', 'summaryDetail']
     data = fetch_modules(ticket, modules)
     return Stats(data)

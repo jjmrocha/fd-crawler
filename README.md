@@ -5,47 +5,48 @@ Finance crawler for reading financial data from public sites
 
 Requirements
 ------------
+
 1. python3
 2. pipenv
 3. chromedriver
 
 Setup
 -----
+
 1. Initialize pipenv virtual env
     ```
-    pipenv --python 3.7
+    pipenv --python 3.9
     ``` 
 
 2. Install dependencies
    ```
    pipenv install --dev
    ```
-   
+
 3. Install Chrome Driver
-   * Download from `http://chromedriver.chromium.org/`
-   * Add `chromedriver` to your `PATH`
-   
+    * Download from `http://chromedriver.chromium.org/`
+    * Add `chromedriver` to your `PATH`
 
 How-to import
 -------------
+
 ```
 pipenv install git+https://github.com/jjmrocha/fd-crawler.git#egg=fd-crawler
 ```
 
-   
 How-to Use
 ----------
 The following program:
+
 ```python
 import time
 
-from fdc.indices.sp500 import get_sp500_tickets
-from fdc.utils import date_util
-from fdc.utils.browser import Browser
+from fdc.indices import sp500
+from fdc.utils import (date_util, browser)
 
 if __name__ == '__main__':
-    with Browser() as browser:
-        for ticket in get_sp500_tickets(browser):
+    with browser.Browser() as browser:
+        for ticket in sp500.tickets(browser):
             print(f'- {ticket.code} - {ticket.name} ({ticket.sector})')
             # Stats
             stats = ticket.stats()
@@ -56,7 +57,7 @@ if __name__ == '__main__':
                   f'ttm_revenue: {financials.income_statement_ttm.revenue} '
                   f'ttm_dividends_paid: {financials.cash_flow_statement_ttm.dividends_paid}')
             # Prices
-            prices = ticket.prices()
+            prices = list(ticket.prices())
             if len(prices):
                 price_52w = prices[0]
                 price_last = prices[-1]
@@ -68,6 +69,7 @@ if __name__ == '__main__':
 ```
 
 Will produce:
+
 ```
 - MMM - 3M Company (Industrials)
    > market_cap: 100447789056 ebitda: 8686999552
@@ -85,7 +87,7 @@ Will produce:
    > 2019-11-26: 87.72000122070312 - 2020-11-23: 102.18000030517578
 ...
 ```
-   
+
 License
 -------
 Any contributions made under this project will be governed by the [MIT License](./LICENSE.md).

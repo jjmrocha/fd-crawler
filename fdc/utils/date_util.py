@@ -5,7 +5,10 @@ from dateutil import parser
 
 
 def to_iso8601(dt: datetime) -> str:
-    return dt.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+    if not dt.tzinfo:
+        dt.replace(tzinfo=pytz.UTC)
+
+    return dt.astimezone(pytz.UTC).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
 
 
 def to_iso8601_date(dt: datetime) -> str:

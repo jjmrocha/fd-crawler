@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import Iterator
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -17,10 +17,10 @@ class Config(object):
         self.password = json_data['password']
 
 
-def get_magic_formula_tickets(browser: Browser,
-                              config: Config,
-                              threshold: int = 50,
-                              top50: bool = True) -> List[Ticket]:
+def tickets(browser: Browser,
+            config: Config,
+            threshold: int = 50,
+            top50: bool = True) -> Iterator[Ticket]:
     driver = browser.goto('https://www.magicformulainvesting.com/Account/LogOn')
     _do_login(driver, config)
     _do_query(driver, threshold, top50)
@@ -48,11 +48,11 @@ def _do_query(driver: WebDriver, threshold: int, top50: bool):
     driver.find_element_by_id('stocks').click()
 
 
-def _extract_tickets(table: Table) -> List[Ticket]:
-    return [
+def _extract_tickets(table: Table) -> Iterator[Ticket]:
+    return (
         Ticket(
             code=row.get_value('Ticker'),
             name=row.get_value('Company Name (in alphabetical order)'),
         )
         for row in table.rows
-    ]
+    )

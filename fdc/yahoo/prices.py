@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import List
+from typing import Iterator
 
 from fdc.utils import date_util
 from fdc.utils import rest
@@ -12,10 +12,10 @@ class Price:
     price: float
 
 
-def get_prices_using_api(ticket: str) -> List[Price]:
+def load_using_api(ticket: str, weeks: int) -> Iterator[Price]:
     endpoint = f'https://query2.finance.yahoo.com/v8/finance/chart/{ticket}'
     end_date = date_util.now()
-    start_date = end_date - timedelta(weeks=52)
+    start_date = end_date - timedelta(weeks=weeks)
     params = {
         'period1': date_util.to_epoch(start_date),
         'period2': date_util.to_epoch(end_date),
@@ -29,10 +29,10 @@ def get_prices_using_api(ticket: str) -> List[Price]:
     dates = json_data['chart']['result'][0]['timestamp']
     values = json_data['chart']['result'][0]['indicators']['quote'][0]['close']
 
-    return [
+    return (
         Price(
             date=date_util.from_epoch(date),
             price=value,
         )
         for date, value in zip(dates, values)
-    ]
+    )
