@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 
 class ProxyList:
@@ -25,7 +25,7 @@ class ProxyList:
 
 
 # Global var
-_proxy_list_object = ProxyList()
+_proxy_list_object_ = ProxyList()
 
 
 def load_proxy_list(file_name: str):
@@ -36,18 +36,28 @@ def load_proxy_list(file_name: str):
             if len(line.strip())
         ]
 
-        global _proxy_list_object
-        _proxy_list_object.update_list(proxy_list)
+        global _proxy_list_object_
+        _proxy_list_object_.update_list(proxy_list)
 
 
-def for_requests():
-    global _proxy_list_object
-    next_proxy = _proxy_list_object.next_proxy()
+def add_proxy(host: str, port: int):
+    global _proxy_list_object_
+    _proxy_list_object_.proxy_list.append(f'{host}:{port}')
 
-    if next_proxy:
+
+def for_requests() -> Optional[Dict[str, str]]:
+    global _proxy_list_object_
+    next_proxy = _proxy_list_object_.next_proxy()
+
+    if next_proxy is not None:
         return {
             'http': f'http://{next_proxy}',
             'https': f'http://{next_proxy}',
         }
 
     return None
+
+
+def for_browser() -> Optional[str]:
+    global _proxy_list_object_
+    return _proxy_list_object_.next_proxy()

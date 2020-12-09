@@ -2,10 +2,11 @@ from typing import Dict
 
 import requests
 
-from fdc.proxy import proxy_list
+from fdc.utils import proxy_list, throttle
 
 
 def execute(endpoint: str, query_params: Dict[str, str]) -> requests.Response:
+    throttle.throttle_for(url=endpoint)
     proxies = proxy_list.for_requests()
     return requests.get(
         url=endpoint,

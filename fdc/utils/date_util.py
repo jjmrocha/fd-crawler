@@ -29,3 +29,6 @@ def from_epoch(dt: int) -> datetime:
 
 def now() -> datetime:
     return datetime.now(tz=pytz.UTC)
+
+
+min_datetime = datetime.min.replace(tzinfo=pytz.UTC)

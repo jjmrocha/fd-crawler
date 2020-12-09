@@ -39,12 +39,15 @@ How-to Use
 The following program:
 
 ```python
-import time
-
 from fdc.indices import sp500
-from fdc.utils import (date_util, browser)
+from fdc.utils import (date_util, browser, throttle, proxy_list)
 
 if __name__ == '__main__':
+    # Optionally, set the proxy or proxies
+    proxy_list.add_proxy(host='localhost', port=1234)
+    # Optionally, Set the delay between requests for each host
+    throttle.set_throttle(delay_in_millis=3000)
+
     with browser.Browser() as browser:
         for ticket in sp500.tickets(browser):
             print(f'- {ticket.code} - {ticket.name} ({ticket.sector})')
@@ -64,8 +67,6 @@ if __name__ == '__main__':
                 print(f'   > {date_util.to_iso8601_date(price_52w.date)}: {price_52w.price} '
                       f'- {date_util.to_iso8601_date(price_last.date)}: {price_last.price}')
             print()
-            # Sleep for 3 seconds to not upset Yahoo
-            time.sleep(3)
 ```
 
 Will produce:
