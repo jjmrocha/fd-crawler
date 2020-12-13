@@ -6,6 +6,9 @@ from fdc.yahoo.base import extract_data_from_page, YahooBase, fetch_modules
 
 class Financials(YahooBase):
     def _process_data_(self):
+        self.price = _price(
+            super().find_value('price', default_value={})
+        )
         self.balance_sheet_lq = _last_quarter_bs(
             super().find_value('balanceSheetHistoryQuarterly', default_value={})
         )
@@ -36,6 +39,13 @@ class Financials(YahooBase):
             for key, value in self.__dict__.items()
             if key != 'data'
         }
+
+
+class Price(YahooBase):
+    def _process_data_(self):
+        self.price = super().find_value('regularMarketPrice', 'raw', default_value=0)
+        self.market_cap = super().find_value('marketCap', 'raw', default_value=0)
+        self.shares_outstanding = int(self.market_cap / self.price)
 
 
 class BalanceSheet(YahooBase):
@@ -88,6 +98,7 @@ def load_using_browser(browser: Browser, ticket: str):
 
 def load_using_api(ticket: str):
     modules = [
+        'price',
         'balanceSheetHistoryQuarterly',
         'balanceSheetHistory',
         'incomeStatementHistoryQuarterly',
@@ -97,6 +108,10 @@ def load_using_api(ticket: str):
     ]
     data = fetch_modules(ticket, modules)
     return Financials(data)
+
+
+def _price(data: Dict) -> Price:
+    return Price(data)
 
 
 def _last_quarter_bs(data: Dict) -> Optional[BalanceSheet]:
