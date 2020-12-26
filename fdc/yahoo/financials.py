@@ -1,44 +1,7 @@
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Set
 
 from fdc.utils.browser import Browser
 from fdc.yahoo.base import extract_data_from_page, YahooBase, fetch_modules
-
-
-class Financials(YahooBase):
-    def _process_data_(self):
-        self.price = _price(
-            super().find_value('price', default_value={})
-        )
-        self.balance_sheet_lq = _last_quarter_bs(
-            super().find_value('balanceSheetHistoryQuarterly', default_value={})
-        )
-        self.balance_sheet_history = _balance_sheet_history(
-            super().find_value('balanceSheetHistory', default_value={})
-        )
-        self.income_statement_ttm = _ttm_iss(
-            super().find_value('incomeStatementHistoryQuarterly', default_value={})
-        )
-        self.income_statement_history = _income_statement_history(
-            super().find_value('incomeStatementHistory', default_value={})
-        )
-        self.cash_flow_statement_ttm = _ttm_cfs(
-            super().find_value('cashflowStatementHistoryQuarterly', default_value={})
-        )
-        self.cash_flow_statement_history = _cash_flow_statement_history(
-            super().find_value('cashflowStatementHistory', default_value={})
-        )
-
-    def to_dict(self):
-        return {
-            key: value.to_dict() if isinstance(value, YahooBase) else (
-                {
-                    key: value.to_dict() if isinstance(value, YahooBase) else value
-                    for key, value in value.items()
-                } if isinstance(value, dict) else value
-            )
-            for key, value in self.__dict__.items()
-            if key != 'data'
-        }
 
 
 class Price(YahooBase):
@@ -88,6 +51,59 @@ class CashFlowStatement(YahooBase):
         self.capital_expenditures = super().find_value('capitalExpenditures', 'raw', default_value=0)
         self.dividends_paid = super().find_value('dividendsPaid', 'raw', default_value=0)
         self.depreciation_and_amortization = super().find_value('depreciation', 'raw', default_value=0)
+
+
+class Financials(YahooBase):
+    def _process_data_(self):
+        self.price = _price(
+            super().find_value('price', default_value={})
+        )
+        self.balance_sheet_lq = _last_quarter_bs(
+            super().find_value('balanceSheetHistoryQuarterly', default_value={})
+        )
+        self.balance_sheet_history = _balance_sheet_history(
+            super().find_value('balanceSheetHistory', default_value={})
+        )
+        self.income_statement_ttm = _ttm_iss(
+            super().find_value('incomeStatementHistoryQuarterly', default_value={})
+        )
+        self.income_statement_history = _income_statement_history(
+            super().find_value('incomeStatementHistory', default_value={})
+        )
+        self.cash_flow_statement_ttm = _ttm_cfs(
+            super().find_value('cashflowStatementHistoryQuarterly', default_value={})
+        )
+        self.cash_flow_statement_history = _cash_flow_statement_history(
+            super().find_value('cashflowStatementHistory', default_value={})
+        )
+
+    @property
+    def years(self) -> Set[str]:
+        years = list(self.cash_flow_statement_history.keys())
+        years.extend(self.balance_sheet_history.keys())
+        years.extend(self.income_statement_history.keys())
+        return set(years)
+
+    def balance_sheet_year(self, year: str) -> BalanceSheet:
+        return self.balance_sheet_history.get(year, BalanceSheet({}))
+
+    def income_statement_year(self, year: str) -> IncomeStatement:
+        return self.income_statement_history.get(year, IncomeStatement({}))
+
+    def cash_flow_statement_year(self, year: str) -> CashFlowStatement:
+        return self.cash_flow_statement_history.get(year, CashFlowStatement({}))
+
+    def to_dict(self):
+        return {
+            key: value.to_dict() if isinstance(value, YahooBase) else (
+                {
+                    key: value.to_dict() if isinstance(value, YahooBase) else value
+                    for key, value in value.items()
+                } if isinstance(value, dict) else value
+            )
+            for key, value in self.__dict__.items()
+            if key != 'data'
+        }
 
 
 def load_using_browser(browser: Browser, ticket: str):
