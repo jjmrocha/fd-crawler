@@ -12,4 +12,5 @@ def execute(endpoint: str, query_params: Dict[str, str]) -> requests.Response:
         url=endpoint,
         params=query_params,
         proxies=proxies,
+        timeout=(30, 30)
     )
