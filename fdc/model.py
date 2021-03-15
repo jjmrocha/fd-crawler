@@ -18,6 +18,13 @@ class Ticket:
     def __repr__(self):
         return f'{self.__class__.__name__}({self.code}, {self.name})'
 
+    def __eq__(self, other):
+        return (
+            self.code == other.code
+            if isinstance(other, Ticket)
+            else False
+        )
+
     def yahoo_code(self):
         return self.code.replace('.', '-')
 
