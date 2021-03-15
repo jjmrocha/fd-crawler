@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Iterator
 
 from fdc.model import Ticket
@@ -6,16 +5,8 @@ from fdc.utils.browser import Browser
 from fdc.utils.table import parse_table, Table
 
 
-class Portfolio(Enum):
-    AkoCapital = 'AKO'
-    FundSmith = 'FS'
-    WarrenBuffet = 'BRK'
-    SethKlarman = 'BAUPOST'
-    ThomasGayner = 'MKL'
-
-
-def tickets(browser: Browser, portfolio: Portfolio) -> Iterator[Ticket]:
-    driver = browser.goto(f'https://dataroma.com/m/holdings.php?m={portfolio.value}')
+def tickets(browser: Browser, portfolio: str) -> Iterator[Ticket]:
+    driver = browser.goto(f'https://dataroma.com/m/holdings.php?m={portfolio}')
     holdings = driver.find_element_by_css_selector('#main > div > table')
     table = parse_table(holdings)
     return _extract_tickets(table)
