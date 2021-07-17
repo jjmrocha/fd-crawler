@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="fd-crawler",
-    version="0.0.1",
+    version="0.0.2",
     author="Joaquim Rocha",
     author_email="jrocha@gmailbox.org",
     description="Finance crawler for reading financial data from public sites",
