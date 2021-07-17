@@ -10,7 +10,6 @@ selenium = "*"
 requests = "*"
 python-dateutil = "*"
 pytz = "*"
-fd-crawler = {editable = true, path = "."}
 
 [requires]
 python_version = "3.9"
