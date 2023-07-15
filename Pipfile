@@ -10,6 +10,7 @@ selenium = "*"
 requests = "*"
 python-dateutil = "*"
 pytz = "*"
+setuptools = "*"
 
 [requires]
 python_version = "3.9"
